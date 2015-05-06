@@ -16,8 +16,6 @@ class TictactoeGame
         @board[row][cell] = ' '
       end
     end
-
-    print_board
   end
 
   def setup_game
@@ -116,7 +114,6 @@ class TictactoeGame
       end
     end
 
-    puts "DEBUG: Sanitized user choice is #{result.inspect}"
     result
   end
 
@@ -159,10 +156,6 @@ class TictactoeGame
   end
 
   def go
-    setup_game
-    start_turn
-    print_board
-    next_turn
     user_quit = false
     game_over = false
 
