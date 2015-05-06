@@ -166,6 +166,9 @@ class Game
 
   def computer_turn
     puts "It's #{@current_turn}'s turn - that's me! Hmm..."
+
+    # fill a random unused space
+    @board.fill_random_space(@current_turn)
   end
 
   def go
