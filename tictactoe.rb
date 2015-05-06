@@ -86,7 +86,31 @@ class Board
       end
     end
 
-    
+    if !placed
+      @board.length.times do |col|
+        current_column = @board.length.times.map {|row| @board[row][col]}
+        if current_column.count(mark) == @board.length - 1 && current_column.count(' ') == 1
+          fill_space([current_column.index(' '), col], mark)
+          placed = true
+        end
+      end
+
+      if !placed
+        diagonal = @board.length.times.map {|i| @board[i][i]}
+        if diagonal.count(mark) == @board.length - 1 && diagonal.count(' ') == 1
+          fill_space([diagonal.index(' '), diagonal.index(' ')], mark)
+          placed = true
+        end
+
+        if !placed
+          diagonal = @board.length.times.map {|i| @board[(@board.length - 1) - i][i]}
+          if diagonal.count(mark) == @board.length - 1 && diagonal.count(' ') == 1
+            fill_space([(@board.length - diagonal.index(' ') - 1), diagonal.index(' ')], mark)
+            placed = true
+          end
+        end
+      end
+    end
 
     placed
   end
@@ -259,13 +283,12 @@ class Game
     puts "It's #{@current_turn}'s turn - that's me! Hmm..."
 
     if @board.take_win(@current_turn)
-      puts "DEBUG: Took a win!"
+
     elsif @board.cut_off_opponent(@current_turn)
-      puts "DEBUG: Cut off an opponent"
+
     else
       # fill a random unused space
       @board.fill_random_space(@current_turn)
-      puts "DEBUG: Took random space"
     end
   end
 
