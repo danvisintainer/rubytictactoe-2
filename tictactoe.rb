@@ -56,10 +56,28 @@ class Board
 
   def fill_space(sanitized_choice, mark)
     @board[sanitized_choice[0]][sanitized_choice[1]] = mark
+    @spaces_available -= 1
+    check_for_and_set_winner
   end
 
-  def is_winner
-    result = false
+  # for the computer player, this will just fill a random space.
+  def fill_random_space(mark)
+    space_filled = false
+    while !space_filled
+      row = rand(@board.size)
+      col = rand(@board.size)
+      if !is_space_taken?([row, col])
+        fill_space([row, col], mark)
+        space_filled = true
+      end
+    end
+  end
+
+  # for the computer player, this will fill a space in an attempt to keep the
+  # opponent from winning the game.
+  def cut_off_opponent
+
+  end
 
   def check_for_and_set_winner
     # first, we'll check to see if there's a win in any ROW.
