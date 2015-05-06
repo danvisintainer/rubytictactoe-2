@@ -179,15 +179,20 @@ class Game
         @board.display
         start_turn
 
-        # is_winner ? game_over = true : next_turn
-        if @board.is_winner
-          puts "There's a winner!"
+        if @board.winner
+          @board.display
+          if @board.winner == 'draw'
+            puts "Ooh, nobody won this one."
+          else
+            puts "#{@board.winner} has won the game!"
+          end
           game_over = true
         else
-          puts "No winner yet."
           next_turn
         end
       end
+
+      user_quit = true
     end
   end
 
