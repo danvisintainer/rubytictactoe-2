@@ -62,9 +62,25 @@ class TictactoeGame
     end
   end
 
+  def is_human?(player)
+    if player == 'X'
+      @x_is_human
+    elsif player == 'O'
+      @o_is_human
+    end
+  end
+
   def decide_first_turn
     [true, false].sample ? @current_turn = 'X' : @current_turn = 'O'
     puts "I've thought about this, and I think #{@current_turn} should go first!"
+  end
+
+  def start_turn
+    is_human?(@current_turn) ? human_turn : computer_turn
+  end
+
+  def next_turn
+    @current_turn == 'X' ? @current_turn = 'Y' : @current_turn = 'X'
   end
 
   def human_turn
@@ -77,6 +93,8 @@ class TictactoeGame
 
   def go
     setup_game
+    start_turn
+    next_turn
   end
 
 end
