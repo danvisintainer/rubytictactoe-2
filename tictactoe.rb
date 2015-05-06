@@ -28,7 +28,7 @@ class TictactoeGame
     puts "Will O be a human? (y/n)"
     @o_is_human = false if gets.chomp == 'n'
 
-    puts "How big do you want your board? (2-10)"
+    puts "How big do you want your board? (2-9)"
     setup_board(gets.chomp.to_i)
     decide_first_turn
   end
@@ -83,8 +83,22 @@ class TictactoeGame
     @current_turn == 'X' ? @current_turn = 'Y' : @current_turn = 'X'
   end
 
-  def board_taken
-    
+  def sanitize_user_choice(choice)
+    result = []
+    choice.each do |coord|
+      if (49..57) === coord.ord # if it's a number
+        result[1] = (coord.to_i) - 1
+      elsif coord.ord >= 65 # if it's a letter
+        result[0] = coord.ord - 65
+      end
+    end
+
+    puts "DEBUG: Sanitized user choice is #{result.inspect}"
+    result
+  end
+
+  def is_space_taken?(sanitized_choice)
+    false
   end
 
   def is_user_choice_valid?(choice)
@@ -95,15 +109,26 @@ class TictactoeGame
     true
   end
 
+  def fill_space(sanitized_choice)
+    @board[sanitized_choice[0]][sanitized_choice[1]] = @current_turn
+  end
+
   def human_turn
+    turn_taken = false
     puts "It's your turn, #{@current_turn}. Which space do you want?"
-    choice = gets.chomp.split("")
-    while !is_user_choice_valid?(choice) 
-      puts "That's not a valid choice - try again!"
+
+    while !turn_taken
       choice = gets.chomp.split("")
+      
+      if !is_user_choice_valid?(choice)
+        puts "That's not a valid choice - try again!"
+      elsif is_space_taken?(sanitize_user_choice(choice))
+        puts "That space is already taken! Try another one."
+      else
+        fill_space(sanitize_user_choice(choice))
+        turn_taken = true
+      end
     end
-
-
   end
 
   def computer_turn
@@ -113,6 +138,7 @@ class TictactoeGame
   def go
     setup_game
     start_turn
+    print_board
     next_turn
   end
 
