@@ -78,6 +78,20 @@ class Board
       end
     end
 
+    # now we check for diagonal wins
+    diagonal = @board.length.times.map {|i| @board[i][i]}
+    if diagonal.uniq.length == 1 && !diagonal.include?(' ')
+      @winner = diagonal.uniq.first
+    end
+
+    diagonal = @board.length.times.map {|i| @board[(@board.length - 1) - i][i]}
+    if diagonal.uniq.length == 1 && !diagonal.include?(' ')
+      @winner = diagonal.uniq.first
+    end
+
+    if @spaces_available == 0 && !@winner
+      @winner = 'draw'
+    end
   end
 
 end
