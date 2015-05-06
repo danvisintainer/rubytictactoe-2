@@ -1,37 +1,24 @@
 require 'pry'
 
-class TictactoeGame
+class Board
 
-  def initialize
-    @board = []
-    @x_is_human = true
-    @o_is_human = true
-    @current_turn = 'X'
+  def initialize(size)
+    @board = build_board(size)
   end
 
-  def setup_board(n)
-    n.times do |row|
-      @board[row] = []
-      n.times do |cell|
-        @board[row][cell] = ' '
+  def build_board(size)
+    new_board = []
+    size.times do |row|
+      new_board[row] = []
+      size.times do |cell|
+        new_board[row][cell] = ' '
       end
     end
+
+    new_board
   end
 
-  def setup_game
-    puts "Let's play Tic-Tac-Toe!"
-    puts "Will X be a human? (y/n)"
-    @x_is_human = false if gets.chomp == 'n'
-
-    puts "Will O be a human? (y/n)"
-    @o_is_human = false if gets.chomp == 'n'
-
-    puts "How big do you want your board? (2-9)"
-    setup_board(gets.chomp.to_i)
-    decide_first_turn
-  end
-
-  def print_board
+  def display
     board_size = @board.length
 
     print "  "
@@ -60,25 +47,12 @@ class TictactoeGame
     end
   end
 
-  def is_human?(player)
-    if player == 'X'
-      @x_is_human
-    elsif player == 'O'
-      @o_is_human
-    end
+  def is_space_taken?(sanitized_choice)
+    @board[sanitized_choice[0]][sanitized_choice[1]] != ' '
   end
 
-  def decide_first_turn
-    [true, false].sample ? @current_turn = 'X' : @current_turn = 'O'
-    puts "I've thought about this, and I think #{@current_turn} should go first!"
-  end
-
-  def start_turn
-    is_human?(@current_turn) ? human_turn : computer_turn
-  end
-
-  def next_turn
-    @current_turn == 'X' ? @current_turn = 'O' : @current_turn = 'X'
+  def fill_space(sanitized_choice, mark)
+    @board[sanitized_choice[0]][sanitized_choice[1]] = mark
   end
 
   def is_winner
@@ -104,6 +78,53 @@ class TictactoeGame
     result
   end
 
+end
+
+class Game
+
+  def initialize
+    @board = []
+    @x_is_human = true
+    @o_is_human = true
+    @current_turn = 'X'
+    @winner = ''
+  end
+
+  def setup_game
+    puts "Let's play Tic-Tac-Toe!"
+    puts "Will X be a human? (y/n)"
+    @x_is_human = false if gets.chomp == 'n'
+
+    puts "Will O be a human? (y/n)"
+    @o_is_human = false if gets.chomp == 'n'
+
+    puts "How big do you want your board? (2-9)"
+    # setup_board(gets.chomp.to_i)
+    @board = Board.new(gets.chomp.to_i)
+    decide_first_turn
+  end
+
+  def is_human?(player)
+    if player == 'X'
+      @x_is_human
+    elsif player == 'O'
+      @o_is_human
+    end
+  end
+
+  def decide_first_turn
+    [true, false].sample ? @current_turn = 'X' : @current_turn = 'O'
+    puts "I've thought about this, and I think #{@current_turn} should go first!"
+  end
+
+  def start_turn
+    is_human?(@current_turn) ? human_turn : computer_turn
+  end
+
+  def next_turn
+    @current_turn == 'X' ? @current_turn = 'O' : @current_turn = 'X'
+  end
+
   def sanitize_user_choice(choice)
     result = []
     choice.each do |coord|
@@ -117,20 +138,12 @@ class TictactoeGame
     result
   end
 
-  def is_space_taken?(sanitized_choice)
-    @board[sanitized_choice[0]][sanitized_choice[1]] != ' '
-  end
-
   def is_user_choice_valid?(choice)
     if choice.size != 2
       false
     end
 
     true
-  end
-
-  def fill_space(sanitized_choice)
-    @board[sanitized_choice[0]][sanitized_choice[1]] = @current_turn
   end
 
   def human_turn
@@ -142,10 +155,10 @@ class TictactoeGame
       
       if !is_user_choice_valid?(choice)
         puts "That's not a valid choice - try again!"
-      elsif is_space_taken?(sanitize_user_choice(choice))
+      elsif @board.is_space_taken?(sanitize_user_choice(choice))
         puts "That space is already taken! Try another one."
       else
-        fill_space(sanitize_user_choice(choice))
+        @board.fill_space(sanitize_user_choice(choice), @current_turn)
         turn_taken = true
       end
     end
@@ -163,11 +176,11 @@ class TictactoeGame
       setup_game
 
       while !game_over
-        print_board
+        @board.display
         start_turn
 
         # is_winner ? game_over = true : next_turn
-        if is_winner
+        if @board.is_winner
           puts "There's a winner!"
           game_over = true
         else
@@ -180,4 +193,4 @@ class TictactoeGame
 
 end
 
-TictactoeGame.new.go
+Game.new.go
