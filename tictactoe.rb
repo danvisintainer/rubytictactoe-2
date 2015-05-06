@@ -80,7 +80,30 @@ class TictactoeGame
   end
 
   def next_turn
-    @current_turn == 'X' ? @current_turn = 'Y' : @current_turn = 'X'
+    @current_turn == 'X' ? @current_turn = 'O' : @current_turn = 'X'
+  end
+
+  def is_winner
+    result = false
+
+    # first, we'll check to see if there's a win in any ROW.
+    # here, we just traverse through the array and see if each subarray element
+    # is alike. if there's an empty space (' ') in the subarray, the row can't
+    # be filled, so we ignore it. 
+    @board.each do |row|
+      if row.uniq.length == 1 && !row.include?(' ')
+        result = true 
+      end
+    end
+
+    @board.length.times do |col|
+      current_column = @board.length.times.map {|row| @board[row][col]}
+      if current_column.uniq.length == 1 && !current_column.include?(' ')
+        result = true
+      end
+    end
+
+    result
   end
 
   def sanitize_user_choice(choice)
