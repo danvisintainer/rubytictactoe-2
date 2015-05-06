@@ -13,7 +13,7 @@ class TictactoeGame
     n.times do |row|
       @board[row] = []
       n.times do |cell|
-        @board[row][cell] = '-'
+        @board[row][cell] = ' '
       end
     end
 
@@ -83,8 +83,27 @@ class TictactoeGame
     @current_turn == 'X' ? @current_turn = 'Y' : @current_turn = 'X'
   end
 
+  def board_taken
+    
+  end
+
+  def is_user_choice_valid?(choice)
+    if choice.size != 2
+      false
+    end
+
+    true
+  end
+
   def human_turn
     puts "It's your turn, #{@current_turn}. Which space do you want?"
+    choice = gets.chomp.split("")
+    while !is_user_choice_valid?(choice) 
+      puts "That's not a valid choice - try again!"
+      choice = gets.chomp.split("")
+    end
+
+
   end
 
   def computer_turn
