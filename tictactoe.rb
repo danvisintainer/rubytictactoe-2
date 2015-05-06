@@ -6,6 +6,7 @@ class TictactoeGame
     @board = []
     @x_is_human = true
     @o_is_human = true
+    @current_turn = 'X'
   end
 
   def setup_board(n)
@@ -29,6 +30,7 @@ class TictactoeGame
 
     puts "How big do you want your board? (2-10)"
     setup_board(gets.chomp.to_i)
+    decide_first_turn
   end
 
   def print_board
@@ -60,9 +62,13 @@ class TictactoeGame
     end
   end
 
+  def decide_first_turn
+    [true, false].sample ? @current_turn = 'X' : @current_turn = 'O'
+    puts "I've thought about this, and I think #{@current_turn} should go first!"
+  end
+
   def go
     setup_game
-    binding.pry
   end
 
 end
