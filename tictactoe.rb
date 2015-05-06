@@ -58,24 +58,26 @@ class Board
   def is_winner
     result = false
 
+  def check_for_and_set_winner
     # first, we'll check to see if there's a win in any ROW.
     # here, we just traverse through the array and see if each subarray element
     # is alike. if there's an empty space (' ') in the subarray, the row can't
     # be filled, so we ignore it. 
     @board.each do |row|
       if row.uniq.length == 1 && !row.include?(' ')
-        result = true 
+        @winner = row.uniq.first 
       end
     end
 
+    # now we check for a win in all columns. this is a little trickier given
+    # the arrays-in-arrays setup, but the logic is similar
     @board.length.times do |col|
       current_column = @board.length.times.map {|row| @board[row][col]}
       if current_column.uniq.length == 1 && !current_column.include?(' ')
-        result = true
+        @winner = current_column.uniq.first
       end
     end
 
-    result
   end
 
 end
