@@ -67,6 +67,14 @@ class TictactoeGame
     puts "I've thought about this, and I think #{@current_turn} should go first!"
   end
 
+  def human_turn
+    puts "It's your turn, #{@current_turn}. Which space do you want?"
+  end
+
+  def computer_turn
+    puts "It's #{@current_turn}'s turn - that's me! Hmm..."
+  end
+
   def go
     setup_game
   end
