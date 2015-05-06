@@ -121,7 +121,7 @@ class TictactoeGame
   end
 
   def is_space_taken?(sanitized_choice)
-    false
+    @board[sanitized_choice[0]][sanitized_choice[1]] != ' '
   end
 
   def is_user_choice_valid?(choice)
