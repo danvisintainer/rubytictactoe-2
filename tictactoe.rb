@@ -140,6 +140,26 @@ class TictactoeGame
     start_turn
     print_board
     next_turn
+    user_quit = false
+    game_over = false
+
+    while !user_quit 
+      setup_game
+
+      while !game_over
+        print_board
+        start_turn
+
+        # is_winner ? game_over = true : next_turn
+        if is_winner
+          puts "There's a winner!"
+          game_over = true
+        else
+          puts "No winner yet."
+          next_turn
+        end
+      end
+    end
   end
 
 end
