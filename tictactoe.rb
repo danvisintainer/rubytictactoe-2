@@ -73,10 +73,64 @@ class Board
     end
   end
 
+  # for the computer player, this will fill the last space required to win, if
+  # possible.
+  def take_win(mark)
+    placed = false
+
+    # check rows for possible win...
+    @board.each_with_index do |row, i|
+      if row.count(mark) == @board.length - 1 && row.count(' ') == 1
+        fill_space([i, row.index(' ')], mark)
+        placed = true
+      end
+    end
+
+    
+
+    placed
+  end
+
   # for the computer player, this will fill a space in an attempt to keep the
   # opponent from winning the game.
-  def cut_off_opponent
+  def cut_off_opponent(mark)
+    mark == 'X' ? opponent = 'O' : opponent = 'X'
+    placed = false
 
+    @board.each_with_index do |row, i|
+      if row.count(opponent) == @board.length - 1 && row.count(' ') == 1
+        fill_space([i, row.index(' ')], mark)
+        placed = true
+      end
+    end
+
+    if !placed
+      @board.length.times do |col|
+        current_column = @board.length.times.map {|row| @board[row][col]}
+        if current_column.count(opponent) == @board.length - 1 && current_column.count(' ') == 1
+          fill_space([current_column.index(' '), col], mark)
+          placed = true
+        end
+      end
+
+      if !placed
+        diagonal = @board.length.times.map {|i| @board[i][i]}
+        if diagonal.count(opponent) == @board.length - 1 && diagonal.count(' ') == 1
+          fill_space([diagonal.index(' '), diagonal.index(' ')], mark)
+          placed = true
+        end
+
+        if !placed
+          diagonal = @board.length.times.map {|i| @board[(@board.length - 1) - i][i]}
+          if diagonal.count(opponent) == @board.length - 1 && diagonal.count(' ') == 1
+            fill_space([(@board.length - diagonal.index(' ') - 1), diagonal.index(' ')], mark)
+            placed = true
+          end
+        end
+      end
+    end
+
+    placed
   end
 
   def check_for_and_set_winner
@@ -204,8 +258,15 @@ class Game
   def computer_turn
     puts "It's #{@current_turn}'s turn - that's me! Hmm..."
 
-    # fill a random unused space
-    @board.fill_random_space(@current_turn)
+    if @board.take_win(@current_turn)
+      puts "DEBUG: Took a win!"
+    elsif @board.cut_off_opponent(@current_turn)
+      puts "DEBUG: Cut off an opponent"
+    else
+      # fill a random unused space
+      @board.fill_random_space(@current_turn)
+      puts "DEBUG: Took random space"
+    end
   end
 
   def go
