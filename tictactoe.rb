@@ -23,29 +23,27 @@ class Board
   end
 
   def display
-    board_size = board_array.length
-
     print "  "
-    board_size.times do |i|
+    size.times do |i|
       print " #{i + 1}  "
     end
     puts ""
 
-    board_size.times do |row|
+    size.times do |row|
       print "#{(65 + row).chr} "
-      board_size.times do |cell|
+      size.times do |cell|
         output = " #{board_array[row][cell]}"
-        output += " |" unless (cell + 1) == board_size
+        output += " |" unless (cell + 1) == size
         print output
       end
       
       print "\n  "
       
-      board_size.times do |i|
+      size.times do |i|
         output = '---'
-        output += '+' unless (i + 1) == board_size
+        output += '+' unless (i + 1) == size
         print output
-      end unless (row + 1) == board_size
+      end unless (row + 1) == size
       
       puts ""
     end
