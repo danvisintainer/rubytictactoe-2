@@ -206,6 +206,10 @@ class Game
     @winner = ''
   end
 
+  def reset_game
+
+  end
+
   def setup_game
     puts "Let's play Tic-Tac-Toe!"
     puts "Will X be a human? (y/n)"
@@ -214,7 +218,7 @@ class Game
     puts "Will O be a human? (y/n)"
     @o_is_human = false if gets.chomp == 'n'
 
-    puts "How big do you want your board? (2-9)"
+    puts "How big do you want the board? (2-9)"
     # setup_board(gets.chomp.to_i)
     @board = Board.new(gets.chomp.to_i)
     decide_first_turn
