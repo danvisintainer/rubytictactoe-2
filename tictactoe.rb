@@ -1,7 +1,7 @@
 require 'pry'
 
 class Board
-  attr_reader :winner, :size, :board_array
+  attr_accessor :winner, :size, :board_array
 
   def initialize(size)
     @board_array = build_board(size)
