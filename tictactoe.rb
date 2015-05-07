@@ -1,7 +1,7 @@
 require 'pry'
 
 class Board
-  attr_reader :winner, :size
+  attr_reader :winner, :size, :board
 
   def initialize(size)
     @board = build_board(size)
@@ -170,7 +170,8 @@ class Board
     end
 
     # now we check for a win in all columns. this is a little trickier given
-    # the arrays-in-arrays setup, but the logic is similar
+    # the arrays-in-arrays setup, but the logic is similar. we make temp arrays
+    # so we can quickly check to see if all elements are identical
     @board.length.times do |col|
       current_column = @board.length.times.map {|row| @board[row][col]}
       if current_column.uniq.length == 1 && !current_column.include?(' ')
@@ -178,7 +179,7 @@ class Board
       end
     end
 
-    # now we check for diagonal wins
+    # now we check for diagonal wins. same logic as before.
     diagonal = @board.length.times.map {|i| @board[i][i]}
     if diagonal.uniq.length == 1 && !diagonal.include?(' ')
       @winner = diagonal.uniq.first
@@ -189,6 +190,8 @@ class Board
       @winner = diagonal.uniq.first
     end
 
+    # and finally, if the board is filled up and there are no wins, it must
+    # be a draw.
     if @spaces_available == 0 && !@winner
       @winner = 'draw'
     end
@@ -199,15 +202,21 @@ end
 class Game
 
   def initialize
-    @board = []
     @x_is_human = true
     @o_is_human = true
     @current_turn = 'X'
     @winner = ''
   end
 
-  def reset_game
+  def print_intro
+    puts <<-intro
+Welcome to Dan Visintainer's Tic-Tac-Toe!
+Remember, the only winning move is not to play.
 
+To pick your space, enter the space's coordinates using the board
+displayed below. For example, to take the upper-left spot, enter
+"A1". "a1" or "1A" will also work.
+    intro
   end
 
   def setup_game
@@ -221,7 +230,6 @@ class Game
     puts "How big do you want the board? (2-9)"
     # setup_board(gets.chomp.to_i)
     @board = Board.new(gets.chomp.to_i)
-    decide_first_turn
   end
 
   def is_human?(player)
@@ -289,22 +297,26 @@ class Game
   def computer_turn
     puts "It's #{@current_turn}'s turn - that's me! Hmm..."
 
+    # first and foremost, the computer will check to see if it can win the
+    # game, and if it can, it'll do so over anything else.
     if @board.take_win(@current_turn)
-
+    # if it can't win, it'll check to see if it can prevent its opponent from
+    # winning.
     elsif @board.cut_off_opponent(@current_turn)
-
     else
-      # fill a random unused space
+      # and if nothing else, it'll just pick a random space.
       @board.fill_random_space(@current_turn)
     end
   end
 
   def go
     user_quit = false
-    game_over = false
 
     while !user_quit 
+      game_over = false
       setup_game
+      print_intro
+      decide_first_turn
 
       while !game_over
         @board.display
