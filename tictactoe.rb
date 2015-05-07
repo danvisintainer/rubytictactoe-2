@@ -1,10 +1,10 @@
 require 'pry'
 
 class Board
-  attr_reader :winner, :size, :board
+  attr_reader :winner, :size, :board_array
 
   def initialize(size)
-    @board = build_board(size)
+    @board_array = build_board(size)
     @winner = false
     @spaces_available = size * size
     @size = size
@@ -23,7 +23,7 @@ class Board
   end
 
   def display
-    board_size = @board.length
+    board_size = board_array.length
 
     print "  "
     board_size.times do |i|
@@ -34,7 +34,7 @@ class Board
     board_size.times do |row|
       print "#{(65 + row).chr} "
       board_size.times do |cell|
-        output = " #{@board[row][cell]}"
+        output = " #{board_array[row][cell]}"
         output += " |" unless (cell + 1) == board_size
         print output
       end
@@ -52,118 +52,23 @@ class Board
   end
 
   def is_space_taken?(sanitized_choice)
-    @board[sanitized_choice[0]][sanitized_choice[1]] != ' '
+    board_array[sanitized_choice[0]][sanitized_choice[1]] != ' '
   end
 
   def fill_space(sanitized_choice, mark)
-    @board[sanitized_choice[0]][sanitized_choice[1]] = mark
+    board_array[sanitized_choice[0]][sanitized_choice[1]] = mark
     @spaces_available -= 1
     check_for_and_set_winner
   end
 
-  # for the computer player, this will just fill a random space.
-  def fill_random_space(mark)
-    space_filled = false
-    while !space_filled
-      row = rand(@board.size)
-      col = rand(@board.size)
-      if !is_space_taken?([row, col])
-        fill_space([row, col], mark)
-        space_filled = true
-      end
-    end
-  end
 
-  # for the computer player, this will fill the last space required to win, if
-  # possible.
-  def take_win(mark)
-    placed = false
-
-    # check rows for possible win...
-    @board.each_with_index do |row, i|
-      if row.count(mark) == @board.length - 1 && row.count(' ') == 1
-        fill_space([i, row.index(' ')], mark)
-        placed = true
-      end
-    end
-
-    if !placed
-      @board.length.times do |col|
-        current_column = @board.length.times.map {|row| @board[row][col]}
-        if current_column.count(mark) == @board.length - 1 && current_column.count(' ') == 1
-          fill_space([current_column.index(' '), col], mark)
-          placed = true
-        end
-      end
-
-      if !placed
-        diagonal = @board.length.times.map {|i| @board[i][i]}
-        if diagonal.count(mark) == @board.length - 1 && diagonal.count(' ') == 1
-          fill_space([diagonal.index(' '), diagonal.index(' ')], mark)
-          placed = true
-        end
-
-        if !placed
-          diagonal = @board.length.times.map {|i| @board[(@board.length - 1) - i][i]}
-          if diagonal.count(mark) == @board.length - 1 && diagonal.count(' ') == 1
-            fill_space([(@board.length - diagonal.index(' ') - 1), diagonal.index(' ')], mark)
-            placed = true
-          end
-        end
-      end
-    end
-
-    placed
-  end
-
-  # for the computer player, this will fill a space in an attempt to keep the
-  # opponent from winning the game.
-  def cut_off_opponent(mark)
-    mark == 'X' ? opponent = 'O' : opponent = 'X'
-    placed = false
-
-    @board.each_with_index do |row, i|
-      if row.count(opponent) == @board.length - 1 && row.count(' ') == 1
-        fill_space([i, row.index(' ')], mark)
-        placed = true
-      end
-    end
-
-    if !placed
-      @board.length.times do |col|
-        current_column = @board.length.times.map {|row| @board[row][col]}
-        if current_column.count(opponent) == @board.length - 1 && current_column.count(' ') == 1
-          fill_space([current_column.index(' '), col], mark)
-          placed = true
-        end
-      end
-
-      if !placed
-        diagonal = @board.length.times.map {|i| @board[i][i]}
-        if diagonal.count(opponent) == @board.length - 1 && diagonal.count(' ') == 1
-          fill_space([diagonal.index(' '), diagonal.index(' ')], mark)
-          placed = true
-        end
-
-        if !placed
-          diagonal = @board.length.times.map {|i| @board[(@board.length - 1) - i][i]}
-          if diagonal.count(opponent) == @board.length - 1 && diagonal.count(' ') == 1
-            fill_space([(@board.length - diagonal.index(' ') - 1), diagonal.index(' ')], mark)
-            placed = true
-          end
-        end
-      end
-    end
-
-    placed
-  end
 
   def check_for_and_set_winner
     # first, we'll check to see if there's a win in any ROW.
     # here, we just traverse through the array and see if each subarray element
     # is alike. if there's an empty space (' ') in the subarray, the row can't
     # be filled, so we ignore it. 
-    @board.each do |row|
+    board_array.each do |row|
       if row.uniq.length == 1 && !row.include?(' ')
         @winner = row.uniq.first 
       end
@@ -172,20 +77,20 @@ class Board
     # now we check for a win in all columns. this is a little trickier given
     # the arrays-in-arrays setup, but the logic is similar. we make temp arrays
     # so we can quickly check to see if all elements are identical
-    @board.length.times do |col|
-      current_column = @board.length.times.map {|row| @board[row][col]}
+    board_array.length.times do |col|
+      current_column = board_array.length.times.map {|row| board_array[row][col]}
       if current_column.uniq.length == 1 && !current_column.include?(' ')
         @winner = current_column.uniq.first
       end
     end
 
     # now we check for diagonal wins. same logic as before.
-    diagonal = @board.length.times.map {|i| @board[i][i]}
+    diagonal = board_array.length.times.map {|i| board_array[i][i]}
     if diagonal.uniq.length == 1 && !diagonal.include?(' ')
       @winner = diagonal.uniq.first
     end
 
-    diagonal = @board.length.times.map {|i| @board[(@board.length - 1) - i][i]}
+    diagonal = board_array.length.times.map {|i| board_array[(board_array.length - 1) - i][i]}
     if diagonal.uniq.length == 1 && !diagonal.include?(' ')
       @winner = diagonal.uniq.first
     end
@@ -299,14 +204,112 @@ displayed below. For example, to take the upper-left spot, enter
 
     # first and foremost, the computer will check to see if it can win the
     # game, and if it can, it'll do so over anything else.
-    if @board.take_win(@current_turn)
+    if take_win(@current_turn)
     # if it can't win, it'll check to see if it can prevent its opponent from
     # winning.
-    elsif @board.cut_off_opponent(@current_turn)
+    elsif cut_off_opponent(@current_turn)
     else
       # and if nothing else, it'll just pick a random space.
-      @board.fill_random_space(@current_turn)
+      fill_random_space(@current_turn)
     end
+  end
+
+    # for the computer player, this will just fill a random space.
+  def fill_random_space(mark)
+    space_filled = false
+    while !space_filled
+      row = rand(@board.size)
+      col = rand(@board.size)
+      if !is_space_taken?([row, col])
+        @board.fill_space([row, col], mark)
+        space_filled = true
+      end
+    end
+  end
+
+  # for the computer player, this will fill the last space required to win, if
+  # possible.
+  def take_win(mark)
+    placed = false
+
+    # check rows for possible win...
+    binding.pry
+    @board.each_with_index do |row, i|
+      if row.count(mark) == @board.length - 1 && row.count(' ') == 1
+        @board.fill_space([i, row.index(' ')], mark)
+        placed = true
+      end
+    end
+
+    if !placed
+      @board.length.times do |col|
+        current_column = @board.length.times.map {|row| @board[row][col]}
+        if current_column.count(mark) == @board.length - 1 && current_column.count(' ') == 1
+          @board.fill_space([current_column.index(' '), col], mark)
+          placed = true
+        end
+      end
+
+      if !placed
+        diagonal = @board.length.times.map {|i| @board[i][i]}
+        if diagonal.count(mark) == @board.length - 1 && diagonal.count(' ') == 1
+          @board.fill_space([diagonal.index(' '), diagonal.index(' ')], mark)
+          placed = true
+        end
+
+        if !placed
+          diagonal = @board.length.times.map {|i| @board[(@board.length - 1) - i][i]}
+          if diagonal.count(mark) == @board.length - 1 && diagonal.count(' ') == 1
+            @board.fill_space([(@board.length - diagonal.index(' ') - 1), diagonal.index(' ')], mark)
+            placed = true
+          end
+        end
+      end
+    end
+
+    placed
+  end
+
+  # for the computer player, this will fill a space in an attempt to keep the
+  # opponent from winning the game.
+  def cut_off_opponent(mark)
+    mark == 'X' ? opponent = 'O' : opponent = 'X'
+    placed = false
+
+    @board.each_with_index do |row, i|
+      if row.count(opponent) == @board.length - 1 && row.count(' ') == 1
+        @board.fill_space([i, row.index(' ')], mark)
+        placed = true
+      end
+    end
+
+    if !placed
+      @board.length.times do |col|
+        current_column = @board.length.times.map {|row| @board[row][col]}
+        if current_column.count(opponent) == @board.length - 1 && current_column.count(' ') == 1
+          @board.fill_space([current_column.index(' '), col], mark)
+          placed = true
+        end
+      end
+
+      if !placed
+        diagonal = @board.length.times.map {|i| @board[i][i]}
+        if diagonal.count(opponent) == @board.length - 1 && diagonal.count(' ') == 1
+          @board.fill_space([diagonal.index(' '), diagonal.index(' ')], mark)
+          placed = true
+        end
+
+        if !placed
+          diagonal = @board.length.times.map {|i| @board[(@board.length - 1) - i][i]}
+          if diagonal.count(opponent) == @board.length - 1 && diagonal.count(' ') == 1
+            @board.fill_space([(@board.length - diagonal.index(' ') - 1), diagonal.index(' ')], mark)
+            placed = true
+          end
+        end
+      end
+    end
+
+    placed
   end
 
   def go
