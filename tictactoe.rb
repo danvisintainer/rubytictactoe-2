@@ -1,12 +1,13 @@
 require 'pry'
 
 class Board
-  attr_reader :winner
+  attr_reader :winner, :size
 
   def initialize(size)
     @board = build_board(size)
     @winner = false
     @spaces_available = size * size
+    @size = size
   end
 
   def build_board(size)
