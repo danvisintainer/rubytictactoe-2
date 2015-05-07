@@ -318,7 +318,9 @@ class Game
         end
       end
 
-      user_quit = true
+      puts "Would you like to play again? Enter 'q' to quit."
+      input = gets.chomp
+      user_quit = true if input == 'q' || input == 'Q'
     end
   end
 
