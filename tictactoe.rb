@@ -121,16 +121,39 @@ displayed below. For example, to take the upper-left spot, enter
   end
 
   def setup_game
+    input = ''
     puts "Let's play Tic-Tac-Toe!"
-    puts "Will X be a human? (y/n)"
-    @x_is_human = false if gets.chomp == 'n'
 
-    puts "Will O be a human? (y/n)"
-    @o_is_human = false if gets.chomp == 'n'
+    while !'YyNn'.include?(input) || input == ''
+      puts "Will X be a human? (y/n)"
+      input = gets.chomp
 
-    puts "How big do you want the board? (2-9)"
-    # setup_board(gets.chomp.to_i)
-    @board = Board.new(gets.chomp.to_i)
+      if input == 'Y' || input == 'y'
+        @x_is_human = true
+      elsif input == 'N' || input == 'n'
+        @x_is_human = false
+      end
+    end
+
+    input = ''
+    while !'YyNn'.include?(input) || input == ''
+      puts "Will O be a human? (y/n)"
+      input = gets.chomp
+
+      if input == 'Y' || input == 'y'
+        @o_is_human = true
+      elsif input == 'N' || input == 'n'
+        @o_is_human = false
+      end
+    end
+
+    input = ''
+    while !((2..9) === input.to_i)
+      puts "How big do you want the board? (2-9)"
+      input = gets.chomp
+    end
+
+    @board = Board.new(input.to_i)
   end
 
   def is_human?(player)
