@@ -241,24 +241,26 @@ class Game
   end
 
   def sanitize_user_choice(choice)
-    result = []
-    choice.each do |coord|
-      if (49..57) === coord.ord # if it's a number
-        result[1] = (coord.to_i) - 1
-      elsif coord.ord >= 65 # if it's a letter
-        result[0] = coord.ord - 65
-      end
-    end
-
-    result
-  end
-
-  def is_user_choice_valid?(choice)
     if choice.size != 2
       false
-    end
+    else
+      result = []
+      choice.each do |coord|
+        if (49..57) === coord.ord # if it's a number
+          result[1] = (coord.to_i) - 1 unless (coord.to_i) - 1 > @board.size
+        elsif (65..73) === coord.ord # if it's a letter
+          result[0] = coord.ord - 65  unless coord.ord - 65 >= @board.size
+        elsif (97..105) === coord.ord # if it's a lowercase letter
+          result[0] = coord.ord - 97 unless coord.ord - 97 >= @board.size
+        end
+      end
 
-    true
+      if result.empty? || result.include?(nil)
+        false
+      else
+        result
+      end
+    end
   end
 
   def human_turn
@@ -268,7 +270,7 @@ class Game
     while !turn_taken
       choice = gets.chomp.split("")
       
-      if !is_user_choice_valid?(choice)
+      if !sanitize_user_choice(choice)
         puts "That's not a valid choice - try again!"
       elsif @board.is_space_taken?(sanitize_user_choice(choice))
         puts "That space is already taken! Try another one."
