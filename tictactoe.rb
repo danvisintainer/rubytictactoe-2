@@ -233,7 +233,7 @@ displayed below. For example, to take the upper-left spot, enter
     end
   end
 
-    # for the computer player, this will just fill a random space.
+  # for the computer player, this will just fill a random space.
   def fill_random_space(mark)
     space_filled = false
     while !space_filled
@@ -247,12 +247,11 @@ displayed below. For example, to take the upper-left spot, enter
   end
 
   # for the computer player, this will fill the last space required to win, if
-  # possible.
+  # possible. the computer will do this before anything else.
   def take_win(mark)
     placed = false
 
     # check rows for possible win...
-    binding.pry
     @board.each_with_index do |row, i|
       if row.count(mark) == @board.length - 1 && row.count(' ') == 1
         @board.fill_space([i, row.index(' ')], mark)
@@ -260,6 +259,7 @@ displayed below. For example, to take the upper-left spot, enter
       end
     end
 
+    # check columns for a possible win, only if a piece hasn't been placed.
     if !placed
       @board.length.times do |col|
         current_column = @board.length.times.map {|row| @board[row][col]}
@@ -269,6 +269,7 @@ displayed below. For example, to take the upper-left spot, enter
         end
       end
 
+      # check diagonals for a win
       if !placed
         diagonal = @board.length.times.map {|i| @board[i][i]}
         if diagonal.count(mark) == @board.length - 1 && diagonal.count(' ') == 1
@@ -290,7 +291,8 @@ displayed below. For example, to take the upper-left spot, enter
   end
 
   # for the computer player, this will fill a space in an attempt to keep the
-  # opponent from winning the game.
+  # opponent from winning the game. this is second in priority. the logic used
+  # here is similar to the possible win checker.
   def cut_off_opponent(mark)
     mark == 'X' ? opponent = 'O' : opponent = 'X'
     placed = false
