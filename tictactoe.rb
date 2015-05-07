@@ -59,8 +59,6 @@ class Board
     check_for_and_set_winner
   end
 
-
-
   def check_for_and_set_winner
     # first, we'll check to see if there's a win in any ROW.
     # here, we just traverse through the array and see if each subarray element
@@ -68,7 +66,7 @@ class Board
     # be filled, so we ignore it. 
     board_array.each do |row|
       if row.uniq.length == 1 && !row.include?(' ')
-        @winner = row.uniq.first 
+        self.winner = row.uniq.first 
       end
     end
 
@@ -78,25 +76,25 @@ class Board
     board_array.length.times do |col|
       current_column = board_array.length.times.map {|row| board_array[row][col]}
       if current_column.uniq.length == 1 && !current_column.include?(' ')
-        @winner = current_column.uniq.first
+        self.winner = current_column.uniq.first
       end
     end
 
     # now we check for diagonal wins. same logic as before.
     diagonal = board_array.length.times.map {|i| board_array[i][i]}
     if diagonal.uniq.length == 1 && !diagonal.include?(' ')
-      @winner = diagonal.uniq.first
+      self.winner = diagonal.uniq.first
     end
 
     diagonal = board_array.length.times.map {|i| board_array[(board_array.length - 1) - i][i]}
     if diagonal.uniq.length == 1 && !diagonal.include?(' ')
-      @winner = diagonal.uniq.first
+      self.winner = diagonal.uniq.first
     end
 
     # and finally, if the board is filled up and there are no wins, it must
     # be a draw.
-    if @spaces_available == 0 && !@winner
-      @winner = 'draw'
+    if @spaces_available == 0 && !self.winner
+      self.winner = 'draw'
     end
   end
 
