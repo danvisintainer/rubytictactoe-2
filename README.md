@@ -12,9 +12,9 @@ ruby bin/tictactoe
 
 ## Features
 
-- "X" and "O" are interchangeable players. One can be a human with the other played by the computer. Or, make them both humans. Or make them both computers! [Just remember...](http://share.danvisintainer.com/apcnewsharrison-ford-firewall_mainImage7.jpg7.jpg)
+- "X" and "O" are interchangeable. One can be a human with the other played by the computer. Or, make them both humans. Or make them both computers! [Just remember...](http://share.danvisintainer.com/apcnewsharrison-ford-firewall_mainImage7.jpg7.jpg)
 - The player who goes first is picked at random.
-- The computer is "smart" in the sense that it'll immediately win if it can, but it'll also block its opponent from winning if possible.
+- The computer is "smart" in the sense that it'll immediately win if it can, but it'll also block its opponent from winning if possible. Otherwise, it'll just pick a space at random.
 - The size of the board is customizable - you can play an 81-space 9x9 Tic-Tac-Toe game! Or a 4-space 2x2 game.
 
 ## Future tasks / limitations
