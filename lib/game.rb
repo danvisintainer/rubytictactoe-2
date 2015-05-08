@@ -137,7 +137,7 @@ displayed below. For example, to take the upper-left spot, enter
     while !space_filled
       row = rand(@board.size)
       col = rand(@board.size)
-      if !is_space_taken?([row, col])
+      if !@board.is_space_taken?([row, col])
         @board.fill_space([row, col], mark)
         space_filled = true
       end
@@ -150,8 +150,8 @@ displayed below. For example, to take the upper-left spot, enter
     placed = false
 
     # check rows for possible win...
-    @board.each_with_index do |row, i|
-      if row.count(mark) == @board.length - 1 && row.count(' ') == 1
+    @board.board_array.each_with_index do |row, i|
+      if row.count(mark) == @board.size - 1 && row.count(' ') == 1
         @board.fill_space([i, row.index(' ')], mark)
         placed = true
       end
@@ -159,9 +159,9 @@ displayed below. For example, to take the upper-left spot, enter
 
     # check columns for a possible win, only if a piece hasn't been placed.
     if !placed
-      @board.length.times do |col|
-        current_column = @board.length.times.map {|row| @board[row][col]}
-        if current_column.count(mark) == @board.length - 1 && current_column.count(' ') == 1
+      @board.size.times do |col|
+        current_column = @board.size.times.map {|row| @board.board_array[row][col]}
+        if current_column.count(mark) == @board.size - 1 && current_column.count(' ') == 1
           @board.fill_space([current_column.index(' '), col], mark)
           placed = true
         end
@@ -169,16 +169,16 @@ displayed below. For example, to take the upper-left spot, enter
 
       # check diagonals for a win
       if !placed
-        diagonal = @board.length.times.map {|i| @board[i][i]}
-        if diagonal.count(mark) == @board.length - 1 && diagonal.count(' ') == 1
+        diagonal = @board.size.times.map {|i| @board.board_array[i][i]}
+        if diagonal.count(mark) == @board.size - 1 && diagonal.count(' ') == 1
           @board.fill_space([diagonal.index(' '), diagonal.index(' ')], mark)
           placed = true
         end
 
         if !placed
-          diagonal = @board.length.times.map {|i| @board[(@board.length - 1) - i][i]}
-          if diagonal.count(mark) == @board.length - 1 && diagonal.count(' ') == 1
-            @board.fill_space([(@board.length - diagonal.index(' ') - 1), diagonal.index(' ')], mark)
+          diagonal = @board.size.times.map {|i| @board.board_array[(@board.size - 1) - i][i]}
+          if diagonal.count(mark) == @board.size - 1 && diagonal.count(' ') == 1
+            @board.fill_space([(@board.size - diagonal.index(' ') - 1), diagonal.index(' ')], mark)
             placed = true
           end
         end
@@ -195,33 +195,33 @@ displayed below. For example, to take the upper-left spot, enter
     mark == 'X' ? opponent = 'O' : opponent = 'X'
     placed = false
 
-    @board.each_with_index do |row, i|
-      if row.count(opponent) == @board.length - 1 && row.count(' ') == 1
+    @board.board_array.each_with_index do |row, i|
+      if row.count(opponent) == @board.size - 1 && row.count(' ') == 1
         @board.fill_space([i, row.index(' ')], mark)
         placed = true
       end
     end
 
     if !placed
-      @board.length.times do |col|
-        current_column = @board.length.times.map {|row| @board[row][col]}
-        if current_column.count(opponent) == @board.length - 1 && current_column.count(' ') == 1
+      @board.size.times do |col|
+        current_column = @board.size.times.map {|row| @board.board_array[row][col]}
+        if current_column.count(opponent) == @board.size - 1 && current_column.count(' ') == 1
           @board.fill_space([current_column.index(' '), col], mark)
           placed = true
         end
       end
 
       if !placed
-        diagonal = @board.length.times.map {|i| @board[i][i]}
-        if diagonal.count(opponent) == @board.length - 1 && diagonal.count(' ') == 1
+        diagonal = @board.size.times.map {|i| @board.board_array[i][i]}
+        if diagonal.count(opponent) == @board.size - 1 && diagonal.count(' ') == 1
           @board.fill_space([diagonal.index(' '), diagonal.index(' ')], mark)
           placed = true
         end
 
         if !placed
-          diagonal = @board.length.times.map {|i| @board[(@board.length - 1) - i][i]}
-          if diagonal.count(opponent) == @board.length - 1 && diagonal.count(' ') == 1
-            @board.fill_space([(@board.length - diagonal.index(' ') - 1), diagonal.index(' ')], mark)
+          diagonal = @board.size.times.map {|i| @board.board_array[(@board.size - 1) - i][i]}
+          if diagonal.count(opponent) == @board.size - 1 && diagonal.count(' ') == 1
+            @board.fill_space([(@board.size - diagonal.index(' ') - 1), diagonal.index(' ')], mark)
             placed = true
           end
         end
